@@ -4,6 +4,9 @@ import time
 from openpyxl import load_workbook
 
 remain_city = []
+url = ""  #eg: url = "/Cbse-Schools/nct-10083838"
+excel_file_name =  "" #eg: excel_file_name =  "JDscrap.xlsx"
+
 def all_city():
     global remain_city
     from bs4 import BeautifulSoup
@@ -45,7 +48,7 @@ def main(city, sno):
     # print(url, sno)
 
     ### Enter the URL from JUSTDIAL here
-    driver.get(f"https://www.justdial.com/{city}/Cbse-Schools/nct-10083838")
+    driver.get(f"https://www.justdial.com/{city}{url}")
     nameee = "mainn" + str(sno)
 
     driver.execute_script("window.scrollTo(0, 1500)")
@@ -76,13 +79,13 @@ def main(city, sno):
         
 
         try:
-            book = load_workbook('JDscrap.xlsx')
+            book = load_workbook(excel_file_name )
         except:
-            with open('JDscrap.xlsx', 'w') as fp:
+            with open(excel_file_name, 'w') as fp:
                 pass
-            book = load_workbook('JDscrap.xlsx')
+            book = load_workbook(excel_file_name)
 
-        with pd.ExcelWriter('JDscrap.xlsx', mode='a') as writer:
+        with pd.ExcelWriter(excel_file_name, mode='a') as writer:
             writer.book = book
             writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
             print(writer.sheets)
@@ -129,17 +132,14 @@ def main(city, sno):
         addressList.append(address)
         numbersList.append("".join(myList))
 
-    # intialise data of lists.
     data = {'Name': nameList,
             'Address': addressList,
             'Phone': numbersList}
 
-    # Create DataFrame
     df = pd.DataFrame(data)
 
     print(df)
 
-    # df.to_excel('teacher.xlsx', header= False, index = False, mode = "a")
     toExcel(df)
     driver.quit()
 
